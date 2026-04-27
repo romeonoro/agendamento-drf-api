@@ -32,15 +32,20 @@ agendamentos/
 ├── api/
 │   ├── agendamento.py      # Domínio rico (Entidades Médico e Agendamento)
 │   └── exceptions.py       # Exceções de domínio e contratos
+├── docs/                   # Documentação arquitetural e diagramas do sistema
 ├── infra/
 │   └── repository.py       # Adaptadores de persistência (Banco em Memória)
 ├── tests/
-│   └── test_agendamento.py # Suíte de testes unitários
+│   ├── test_agendamento.py # Testes unitários das regras de negócio (Domínio)
+│   └── test_repository.py  # Testes unitários de persistência (Infraestrutura)
 ├── main.py                 # Orquestrador / Script de demonstração (MVP)
-├── .flake8                 # Configurações do linter
+├── check.ps1               # Script utilitário para rodar linters, tipagem e testes
+├── pyproject.toml          # Configurações unificadas de ferramentas (black, isort, pytest, mypy, pylint)
+├── .pre-commit-config.yaml # Configuração dos hooks do Git (pre-commit)
+├── .flake8                 # Configurações do linter (Ignora regras conflitantes com o Black)
 ├── .gitignore
 ├── requirements.txt        # Dependências de Produção (Atualmente vazio)
-├── requirements-dev.txt    # Dependências de Desenvolvimento
+├── requirements-dev.txt    # Dependências de Desenvolvimento (Linters e Formatters)
 └── README.md
 ```
 
@@ -58,10 +63,18 @@ Como o foco atual é o Core Domain, a aplicação roda via terminal para demonst
 
 O projeto conta com uma suíte automatizada que garante o funcionamento dos contratos e da persistência. Os testes estão divididos para respeitar as fronteiras da arquitetura (`test_agendamento.py` para o domínio e `test_repository.py` para a infraestrutura).
 
-Para buscar e rodar todos os testes simultaneamente, utilize o comando de *discover* do Python:
+Você pode rodar os testes de duas maneiras:
 
+**Opção 1: Usando `unittest` (Padrão do Python)**
+Para buscar e rodar todos os testes de forma rápida usando a biblioteca padrão:
 ```bash
 python -m unittest discover tests
+```
+
+**Opção 2: Usando `pytest` (Recomendado, com Cobertura)**
+Para rodar os testes com saída aprimorada e relatório de cobertura de código (100% garantido), utilize o `pytest` (já configurado no `pyproject.toml`):
+```bash
+python -m pytest --cov
 ```
 
 ## 🛠️ Como Contribuir
