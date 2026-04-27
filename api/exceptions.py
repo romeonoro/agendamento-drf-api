@@ -1,11 +1,11 @@
 class ForaDoHorarioError(Exception):
-    """Lançada quando a consulta está fora do turno de trabalho do médico."""
-    pass
+    def __init__(self, message="Médico não está disponível neste horário."):
+        super().__init__(message)
 
 class ConflitoHorarioError(Exception):
-    """Lançada quando já existe uma consulta no mesmo horário."""
-    pass
+    def __init__(self, message="Conflito de Horário."):
+        super().__init__(message)
 
 class IntervaloInvalidoError(Exception):
-    """Lançada quando o horário não obedece à grade de intervalos da clínica."""
-    pass
+    def __init__(self, message="O horário deve respeitar a grade de intervalos."):
+        super().__init__(message)

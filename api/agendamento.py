@@ -44,14 +44,14 @@ class Medico:
     def agendar(self, paciente_id: int, data_hora: datetime, agendamentos_existentes: list[Agendamento]) -> Agendamento:
         
         if not self._respeita_grade_de_intervalo(data_hora):
-            raise IntervaloInvalidoError(f"O horário deve ser em blocos de {self._intervalo_atendimento} minutos.")
+            raise IntervaloInvalidoError()
 
         novo_agendamento = Agendamento(paciente_id, data_hora, self._intervalo_atendimento)
 
         if not self._esta_no_horario_de_trabalho(novo_agendamento):
-            raise ForaDoHorarioError("Médico não está disponível neste horário.")
+            raise ForaDoHorarioError()
 
         if self._existe_conflito(novo_agendamento, agendamentos_existentes):
-            raise ConflitoHorarioError("Conflito de Horário.")
+            raise ConflitoHorarioError()
 
         return novo_agendamento
