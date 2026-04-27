@@ -10,7 +10,7 @@ from api.exceptions import (
 from infra.repository import AgendamentoRepositorio
 
 
-def simular_dia_na_clinica():
+def simular_dia_na_clinica() -> None:
     print("=== INICIANDO SISTEMA DE AGENDAMENTOS ===\n")
 
     repo = AgendamentoRepositorio()
@@ -21,10 +21,10 @@ def simular_dia_na_clinica():
         intervalo_atendimento=30,
     )
 
-    print(f"👨‍⚕️ Médico cadastrado: {dr_house._nome}")
+    print(f"👨‍⚕️ Médico cadastrado: {dr_house.nome}")
     print("⏰ Turno: 08:00 às 12:00 (Consultas de 30 min)\n")
 
-    def tentar_agendar(paciente_id: int, data_hora: datetime):
+    def tentar_agendar(paciente_id: int, data_hora: datetime) -> None:
         hora_str = data_hora.strftime("%H:%M")
         print(f"Tentando agendar Paciente ID {paciente_id} para {hora_str}...")
 
@@ -40,10 +40,10 @@ def simular_dia_na_clinica():
             print(f"❌ Bloqueado (Grade Inválida): {e}\n")
         except ConflitoHorarioError as e:
             print(f"❌ Bloqueado (Conflito): {e}\n")
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             print(f"❌ Erro Inesperado: {e}\n")
 
-    def tentar_cancelar(paciente_id: int):
+    def tentar_cancelar(paciente_id: int) -> None:
         print(f"Tentando cancelar a consulta do Paciente ID {paciente_id}...")
         try:
             repo.remover(paciente_id)

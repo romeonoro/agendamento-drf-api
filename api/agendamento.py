@@ -1,4 +1,4 @@
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 
 from api.exceptions import (
     ConflitoHorarioError,
@@ -8,7 +8,9 @@ from api.exceptions import (
 
 
 class Agendamento:
-    def __init__(self, paciente_id: int, inicio: datetime, duracao_minutos: int):
+    def __init__(
+        self, paciente_id: int, inicio: datetime, duracao_minutos: int
+    ) -> None:
         self._paciente_id = paciente_id
         self._inicio = inicio
         self._duracao_minutos = duracao_minutos
@@ -23,8 +25,6 @@ class Agendamento:
 
     @property
     def fim(self) -> datetime:
-        from datetime import timedelta
-
         return self._inicio + timedelta(minutes=self._duracao_minutos)
 
 
@@ -35,11 +35,15 @@ class Medico:
         inicio_turno: time,
         fim_turno: time,
         intervalo_atendimento: int = 30,
-    ):
+    ) -> None:
         self._nome = nome
         self._inicio_turno = inicio_turno
         self._fim_turno = fim_turno
         self._intervalo_atendimento = intervalo_atendimento
+
+    @property
+    def nome(self) -> str:
+        return self._nome
 
     def _esta_no_horario_de_trabalho(self, agendamento: Agendamento) -> bool:
         return (

@@ -3,7 +3,7 @@ from api.exceptions import AgendamentoNaoEncontradoError
 
 
 class AgendamentoRepositorio:
-    def __init__(self):
+    def __init__(self) -> None:
         self._agendamentos: list[Agendamento] = []
 
     def adicionar(self, agendamento: Agendamento) -> None:
