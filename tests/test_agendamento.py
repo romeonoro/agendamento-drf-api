@@ -11,7 +11,7 @@ from api.exceptions import (
 
 class TestAgendamento(unittest.TestCase):
 
-    def test_agendamento_com_sucesso(self):
+    def test_agendamento_com_sucesso(self) -> None:
         medico = Medico(
             nome="Dr. House",
             inicio_turno=time(8, 0),
@@ -32,7 +32,7 @@ class TestAgendamento(unittest.TestCase):
         self.assertEqual(agendamento_criado.paciente_id, paciente_id)
         self.assertEqual(agendamento_criado.fim, datetime(2026, 4, 24, 9, 30))
 
-    def test_erro_agendamento_fora_do_horario(self):
+    def test_erro_agendamento_fora_do_horario(self) -> None:
         medico = Medico(
             nome="Dr. House",
             inicio_turno=time(8, 0),
@@ -52,7 +52,7 @@ class TestAgendamento(unittest.TestCase):
                 agendamentos_existentes=[],
             )
 
-    def test_erro_conflito_de_horario(self):
+    def test_erro_conflito_de_horario(self) -> None:
         medico = Medico(
             nome="Dr. House",
             inicio_turno=time(8, 0),
@@ -76,7 +76,7 @@ class TestAgendamento(unittest.TestCase):
                 agendamentos_existentes=lista_do_repositorio,
             )
 
-    def test_deve_bloquear_consulta_que_termina_apos_fim_do_turno(self):
+    def test_deve_bloquear_consulta_que_termina_apos_fim_do_turno(self) -> None:
         medico = Medico(
             nome="Dr. House",
             inicio_turno=time(8, 0),
@@ -91,7 +91,7 @@ class TestAgendamento(unittest.TestCase):
                 paciente_id=888, data_hora=horario_limite, agendamentos_existentes=[]
             )
 
-    def test_deve_bloquear_horario_quebrado_fora_do_intervalo(self):
+    def test_deve_bloquear_horario_quebrado_fora_do_intervalo(self) -> None:
         medico = Medico(
             nome="Dr. House",
             inicio_turno=time(8, 0),
@@ -105,3 +105,12 @@ class TestAgendamento(unittest.TestCase):
             medico.agendar(
                 paciente_id=123, data_hora=horario_quebrado, agendamentos_existentes=[]
             )
+
+    def test_propriedade_nome_do_medico(self) -> None:
+        medico = Medico(
+            nome="Dr. House",
+            inicio_turno=time(8, 0),
+            fim_turno=time(12, 0),
+            intervalo_atendimento=30,
+        )
+        self.assertEqual(medico.nome, "Dr. House")
