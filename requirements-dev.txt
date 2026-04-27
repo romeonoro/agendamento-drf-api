@@ -1,3 +1,19 @@
-black
-isort
-flake8
+# --- Base ---
+-r requirements.txt            # Garante que as dependências de produção sejam instaladas junto
+
+# --- Linters e Formatação (Qualidade de Código) ---
+black                          # Formatador de código determinístico (estilo padrão)
+isort                          # Organiza e padroniza a ordem das importações
+flake8                         # Checa conformidade com PEP8 e erros de sintaxe
+pylint                         # Análise estática profunda e medição de qualidade de código
+pre-commit                     # Gerencia ganchos de automação antes do commit
+
+# --- Tipagem Estática ---
+mypy                           # Validador de tipos (Type Checking) para evitar bugs de contrato
+
+# --- Testes e Cobertura ---
+pytest                         # Framework moderno para execução de testes unitários
+pytest-cov                     # Gera relatórios de cobertura (quais linhas foram testadas)
+
+# --- Produtividade e Debug ---
+ipython                        # Terminal interativo avançado para testes rápidos de lógica

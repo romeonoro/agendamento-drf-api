@@ -1,0 +1,31 @@
+[tool.black]
+line-length = 88
+target-version = ['py311']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 88
+multi_line_output = 3
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+addopts = "--cov=api --cov=infra --cov-report=term-missing"
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true  # Força você a tipar todas as funções (Nível Sênior)
+
+[tool.pylint."MESSAGES CONTROL"]
+disable = [
+    "C0114", # Missing module docstring
+    "C0115", # Missing class docstring
+    "C0116", # Missing function docstring
+    "R0903", # Too few public methods (Comum em classes de Domínio)
+]
+
+[tool.pylint.FORMAT]
+max-line-length = 88
