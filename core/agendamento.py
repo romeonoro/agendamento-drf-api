@@ -1,6 +1,6 @@
 from datetime import datetime, time, timedelta
 
-from api.exceptions import (
+from core.exceptions import (
     ConflitoHorarioError,
     ForaDoHorarioError,
     IntervaloInvalidoError,

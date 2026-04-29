@@ -1,8 +1,8 @@
 import unittest
 from datetime import datetime
 
-from api.agendamento import Agendamento
-from api.exceptions import AgendamentoNaoEncontradoError
+from core.agendamento import Agendamento
+from core.exceptions import AgendamentoNaoEncontradoError
 from infra.repository import AgendamentoRepositorio
 
 

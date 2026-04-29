@@ -1,7 +1,7 @@
 from datetime import datetime, time
 
-from api.agendamento import Medico
-from api.exceptions import (
+from core.agendamento import Medico
+from core.exceptions import (
     AgendamentoNaoEncontradoError,
     ConflitoHorarioError,
     ForaDoHorarioError,

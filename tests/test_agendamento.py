@@ -1,8 +1,8 @@
 import unittest
 from datetime import datetime, time
 
-from api.agendamento import Agendamento, Medico
-from api.exceptions import (
+from core.agendamento import Agendamento, Medico
+from core.exceptions import (
     ConflitoHorarioError,
     ForaDoHorarioError,
     IntervaloInvalidoError,
