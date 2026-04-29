@@ -11,7 +11,7 @@ multi_line_output = 3
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = "test_*.py"
-addopts = "--cov=api --cov=infra --cov-report=term-missing"
+addopts = "--cov=core --cov=infra --cov-report=term-missing"
 
 [tool.mypy]
 python_version = "3.11"

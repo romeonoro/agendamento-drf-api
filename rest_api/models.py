@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models  # type: ignore
 
 
 class AgendamentoModel(models.Model):
@@ -9,6 +9,8 @@ class AgendamentoModel(models.Model):
     duracao_minutos = models.IntegerField()
 
     criado_em = models.DateTimeField(auto_now_add=True)
+
+    objects = models.Manager()
 
     class Meta:
         db_table = "agendamentos"

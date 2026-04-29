@@ -11,7 +11,7 @@ from core.exceptions import (
 )
 from infra.django_repository import DjangoAgendamentoRepository
 
-from .serializers import AgendamentoInputSerializer
+from .serializers import AgendamentoInputSerializer, AgendamentoOutputSerializer
 
 
 class AgendamentoViewSet(viewsets.ViewSet):
@@ -67,3 +67,13 @@ class AgendamentoViewSet(viewsets.ViewSet):
                 {"erro": "O médico já possui paciente neste horário."},
                 status=status.HTTP_409_CONFLICT,
             )
+
+    def list(self, request):
+        """
+        Endpoint para listar todos os agendamentos (GET /agendamentos/)
+        """
+        repo = DjangoAgendamentoRepository()
+        dados_brutos = repo.listar_todos()
+        serializer = AgendamentoOutputSerializer(dados_brutos, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)

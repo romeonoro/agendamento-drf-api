@@ -114,3 +114,9 @@ class TestAgendamento(unittest.TestCase):
             intervalo_atendimento=30,
         )
         self.assertEqual(medico.nome, "Dr. House")
+
+    def test_deve_retornar_duracao_minutos_corretamente(self) -> None:
+        agendamento = Agendamento(
+            paciente_id=1, inicio=datetime.now(), duracao_minutos=45
+        )
+        self.assertEqual(agendamento.duracao_minutos, 45)

@@ -27,6 +27,10 @@ class Agendamento:
     def fim(self) -> datetime:
         return self._inicio + timedelta(minutes=self._duracao_minutos)
 
+    @property
+    def duracao_minutos(self) -> int:
+        return self._duracao_minutos
+
 
 class Medico:
     def __init__(

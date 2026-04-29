@@ -11,7 +11,7 @@ class DjangoAgendamentoRepository:
             paciente_id=agendamento_entity.paciente_id,
             medico_nome=medico_nome,
             inicio=agendamento_entity.inicio,
-            duracao_minutos=agendamento_entity._duracao_minutos,
+            duracao_minutos=agendamento_entity.duracao_minutos,
         )
 
     def buscar_por_medico_e_data(
@@ -31,3 +31,19 @@ class DjangoAgendamentoRepository:
             )
             for model in modelos
         ]
+
+    def listar_todos(self) -> list[dict]:
+        modelos = AgendamentoModel.objects.all()
+
+        resultado = []
+        for model in modelos:
+            resultado.append(
+                {
+                    "paciente_id": model.paciente_id,
+                    "medico_nome": model.medico_nome,
+                    "inicio": model.inicio,
+                    "duracao_minutos": model.duracao_minutos,
+                }
+            )
+
+        return resultado
