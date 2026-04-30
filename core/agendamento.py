@@ -1,6 +1,7 @@
 from datetime import datetime, time, timedelta
 
 from core.exceptions import (
+    CancelamentoInvalidoError,
     ConflitoHorarioError,
     ForaDoHorarioError,
     IntervaloInvalidoError,
@@ -14,6 +15,7 @@ class Agendamento:
         self._paciente_id = paciente_id
         self._inicio = inicio
         self._duracao_minutos = duracao_minutos
+        self._ativo = True
 
     @property
     def paciente_id(self) -> int:
@@ -30,6 +32,13 @@ class Agendamento:
     @property
     def duracao_minutos(self) -> int:
         return self._duracao_minutos
+
+    @property
+    def ativo(self) -> bool:
+        return self._ativo
+
+    def cancelar(self) -> None:
+        self._ativo = False
 
 
 class Medico:
@@ -87,3 +96,49 @@ class Medico:
             raise ConflitoHorarioError()
 
         return novo_agendamento
+
+    def cancelar(
+        self,
+        paciente_id: int,
+        data_hora: datetime,
+        agendamentos_existentes: list[Agendamento],
+        data_hora_atual: datetime | None = None,
+    ) -> None:
+        """
+        Tenta cancelar um agendamento aplicando as regras de negócio:
+        1. O agendamento deve pertencer ao paciente solicitante.
+        2. O cancelamento deve ocorrer com pelo menos 24h de antecedência.
+        """
+
+        if data_hora_atual is None:
+            data_hora_atual = datetime.now()
+
+        agendamento_alvo = None
+
+        # 1. Busca o agendamento na lista pelo horário
+        for agendamento in agendamentos_existentes:
+            if agendamento.inicio == data_hora and agendamento.ativo:
+                agendamento_alvo = agendamento
+                break
+
+        if not agendamento_alvo:
+            raise CancelamentoInvalidoError(
+                "Nenhum agendamento ativo encontrado neste horário."
+            )
+
+        # 2. Valida se o paciente que está cancelando é o dono da consulta
+        if agendamento_alvo.paciente_id != paciente_id:
+            # Esta é a mensagem exata que o seu primeiro teste espera!
+            raise CancelamentoInvalidoError("Não é possível cancelar este agendamento.")
+
+        # 3. Valida a regra de 24 horas de antecedência
+        diferenca_de_tempo = agendamento_alvo.inicio - data_hora_atual
+
+        # 86400 é a quantidade de segundos em 24 horas
+        if diferenca_de_tempo.total_seconds() < 86400:
+            raise CancelamentoInvalidoError(
+                "Cancelamentos só são permitidos com 24 horas de antecedência."
+            )
+
+        # 4. Se passou por todas as barreiras de segurança, efetua o cancelamento
+        agendamento_alvo.cancelar()

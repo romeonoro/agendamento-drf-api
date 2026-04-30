@@ -21,3 +21,22 @@ class AgendamentoNaoEncontradoError(Exception):
     def __init__(self, paciente_id: int) -> None:
         mensagem = f"Nenhuma consulta encontrada para o Paciente {paciente_id}."
         super().__init__(mensagem)
+
+
+class PacienteNaoEncontradoError(Exception):
+    def __init__(self, paciente_id: int) -> None:
+        mensagem = f"Nenhuma consulta encontrada para o Paciente {paciente_id}."
+        super().__init__(mensagem)
+
+
+class MedicoNaoEncontradoError(Exception):
+    def __init__(self, medico_id: int) -> None:
+        mensagem = f"Nenhuma consulta encontrada para o Médico {medico_id}."
+        super().__init__(mensagem)
+
+
+class CancelamentoInvalidoError(Exception):
+    def __init__(
+        self, message: str = "Não é possível cancelar este agendamento."
+    ) -> None:
+        super().__init__(message)
