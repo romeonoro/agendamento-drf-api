@@ -1,11 +1,8 @@
-from datetime import time
-
-from django.utils import timezone
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from core.agendamento import Medico
+from application.use_cases import CancelarAgendamentoUseCase, CriarAgendamentoUseCase
 from core.exceptions import (
     CancelamentoInvalidoError,
     ConflitoHorarioError,
@@ -25,35 +22,20 @@ class AgendamentoViewSet(viewsets.ViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         dados = serializer.validated_data
-        repo = DjangoAgendamentoRepository()
 
-        medico = Medico(
-            nome="Dr. Sistema",
-            inicio_turno=time(8, 0),
-            fim_turno=time(18, 0),
-            intervalo_atendimento=30,
-        )
-
-        # 2. BUSCANDO O CONTEXTO PARA A REGRA DE NEGÓCIO
-        # Precisamos saber a agenda do dia para o médico não encavalar horários
-        data_do_agendamento = dados["inicio"].date()
-        existentes = repo.buscar_por_medico_e_data(medico.nome, data_do_agendamento)
+        # 1. Instancia o repositório e injeta no Caso de Uso
+        repositorio = DjangoAgendamentoRepository()
+        use_case = CriarAgendamentoUseCase(repositorio=repositorio)
 
         try:
-            # 3. EXECUTANDO O CORE (A sua classe assume o controle aqui!)
-            novo_agendamento = medico.agendar(
-                paciente_id=dados["paciente_id"],
-                data_hora=dados["inicio"],
-                agendamentos_existentes=existentes,
-            )
+            # 2. A View apenas manda o Caso de Uso agir
+            use_case.execute(paciente_id=dados["paciente_id"], inicio=dados["inicio"])
 
-            # 4. SALVANDO E RETORNANDO
-            repo.salvar(novo_agendamento, medico.nome)
             return Response(
                 {"mensagem": "Agendamento criado!"}, status=status.HTTP_201_CREATED
             )
 
-        # Tratamento das suas exceções customizadas
+        # 3. Tratamento das exceções traduzindo para HTTP
         except IntervaloInvalidoError:
             return Response(
                 {"erro": "Os agendamentos devem ser a cada 30 minutos."},
@@ -80,43 +62,27 @@ class AgendamentoViewSet(viewsets.ViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # 1. Instancia o repositório aqui e busca a entidade
+        # 1. Instancia o repositório concreto (Infra)
         repositorio = DjangoAgendamentoRepository()
-        agendamento_core = repositorio.buscar_por_id(pk)
 
-        if not agendamento_core:
-            return Response(
-                {"erro": "Agendamento não encontrado."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        medico = Medico(
-            nome="Dr. Sistema",
-            inicio_turno=time(8, 0),
-            fim_turno=time(18, 0),
-            intervalo_atendimento=30,
-        )
-
-        agendamentos_do_medico = [agendamento_core]
+        # 2. Injeta o repositório no Caso de Uso (Aplicação)
+        use_case = CancelarAgendamentoUseCase(repositorio=repositorio)
 
         try:
-            # 3. EXECUTAR A REGRA DE NEGÓCIO
-            medico.cancelar(
-                paciente_id=int(paciente_id),
-                data_hora=agendamento_core.inicio,
-                agendamentos_existentes=agendamentos_do_medico,
-                data_hora_atual=timezone.now(),
-            )
-
-            # 4. PERSISTIR A MUDANÇA
-            repositorio.atualizar(agendamento_core)
+            # 3. A View apenas manda o Caso de Uso executar a ação
+            use_case.execute(agendamento_id=int(pk), paciente_id=int(paciente_id))
 
             return Response(
                 {"mensagem": "Agendamento cancelado com sucesso."},
                 status=status.HTTP_200_OK,
             )
 
+        except ValueError as e:
+            # Captura o erro do Use Case de "não encontrado"
+            return Response({"erro": str(e)}, status=status.HTTP_404_NOT_FOUND)
+
         except CancelamentoInvalidoError as e:
+            # Captura as regras de negócio quebradas pelo Core
             return Response({"erro": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception:
