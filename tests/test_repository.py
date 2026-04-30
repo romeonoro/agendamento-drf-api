@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from django.test import TestCase  # type: ignore
-from django.utils import timezone
+from django.utils import timezone  # type: ignore
 
 from infra.django_repository import DjangoAgendamentoRepository
 
