@@ -1,63 +1,67 @@
-# Módulo de Agendamento Inteligente (MVP)
+# Agendamento Médico MVP
 
-Este projeto é o núcleo (Core Domain) de uma API de agendamentos para clínicas. O objetivo principal é automatizar a validação de disponibilidade médica, reduzindo o tempo de marcação e eliminando completamente os conflitos de horários.
+Este é um MVP de um sistema de agendamento de consultas médicas desenvolvido com foco em rigor técnico, testabilidade e qualidade de código. O projeto utiliza os princípios de Clean Architecture e Test-Driven Development (TDD) para garantir uma base sólida e evolutiva.
 
-## 🚀 Tecnologias Utilizadas
+## 🎯 Objetivo
 
-O projeto foi desenhado com foco em isolamento de domínio. Por isso, as tecnologias são divididas entre o estado atual e a visão de futuro:
+O projeto foi desenvolvido como um desafio técnico para gerenciar turnos médicos e agendamentos de pacientes, garantindo que regras de negócio complexas — como antecedência de cancelamento e conflitos de horário — sejam respeitadas de forma resiliente.
 
-**Stack Atual (MVP):**
-* **Linguagem:** Python 3.11 (Puro, sem frameworks externos no Core Domain).
-* **Testes:** `unittest` (Biblioteca padrão do Python).
-* **Qualidade de Código (Linters/Formatters):** `black`, `isort`, `flake8`.
+## 🏗️ Arquitetura
 
-**Roadmap Futuro (Camada de Adapters/API):**
-* À medida que a aplicação evoluir para uma interface web completa, a infraestrutura será acoplada utilizando **Django** e **Django REST Framework (DRF)** para gerenciamento de rotas, banco de dados relacional e serialização de dados.
+A solução segue os princípios da Arquitetura Limpa, dividindo as responsabilidades em quatro camadas principais:
 
-## 🏗️ Arquitetura e Padrões de Projeto
+* **Core (Domain):** Contém as entidades (`Medico`, `Agendamento`) e as regras de negócio puras, sem dependências externas.
+* **Application (Use Cases):** Orquestra o fluxo de dados, implementando casos de uso como `CriarAgendamento` e `CancelarAgendamento`.
+* **Infra (Infrastructure):** Implementações concretas de persistência utilizando o ORM do Django e definições de interfaces (Repository Pattern).
+* **Web (REST API):** Camada de interface externa construída com Django Rest Framework, responsável por Serializers e ViewSets.
 
-O desenvolvimento deste módulo segue rigorosos padrões de qualidade de engenharia de software:
+> **Nota Técnica:** O projeto aplica Design by Contract e Encapsulamento rigoroso para prevenir estados inválidos no domínio.
 
-* **Domain-Driven Design (DDD):** Isolamento completo das regras de negócio em um modelo de domínio rico. A classe `Medico` atua como Entidade Pura e guardiã de suas próprias regras (Invariantes).
-* **Clean Architecture & Repository Pattern:** Separação estrita entre "Regras de Negócio" e "Persistência de Dados". O domínio desconhece a infraestrutura.
-* **Test-Driven Development (TDD):** Todo o código de produção foi guiado por testes automatizados, garantindo cobertura total das regras de negócio antes da implementação.
-* **Design by Contract (DbC):** As interações ocorrem através de contratos estritos. Se um contrato for quebrado, o sistema falha rapidamente (Fail-Fast) lançando exceções de domínio específicas.
+## 🛠️ Stack Tecnológica
 
-## 📂 Estrutura do Projeto
+* **Linguagem:** Python 3.11
+* **Framework Web:** Django & Django Rest Framework
+* **Ambiente:** Windows
+* **Qualidade:** Pylint, Mypy, Flake8, Black e Isort
+* **Testes:** Pytest com Pytest-cov
 
-O projeto adota uma estrutura limpa, separando o código de produção, infraestrutura e testes:
+## 🚀 Como Executar
 
-```text
-agendamentos/
-├── api/
-│   ├── agendamento.py      # Domínio rico (Entidades Médico e Agendamento)
-│   └── exceptions.py       # Exceções de domínio e contratos
-├── docs/                   # Documentação arquitetural e diagramas do sistema
-├── infra/
-│   └── repository.py       # Adaptadores de persistência (Banco em Memória)
-├── tests/
-│   ├── test_agendamento.py # Testes unitários das regras de negócio (Domínio)
-│   └── test_repository.py  # Testes unitários de persistência (Infraestrutura)
-├── main.py                 # Orquestrador / Script de demonstração (MVP)
-├── check.ps1               # Script utilitário para rodar linters, tipagem e testes
-├── pyproject.toml          # Configurações unificadas de ferramentas (black, isort, pytest, mypy, pylint)
-├── .pre-commit-config.yaml # Configuração dos hooks do Git (pre-commit)
-├── .flake8                 # Configurações do linter (Ignora regras conflitantes com o Black)
-├── .gitignore
-├── requirements.txt        # Dependências de Produção (Atualmente vazio)
-├── requirements-dev.txt    # Dependências de Desenvolvimento (Linters e Formatters)
-└── README.md
-```
+O projeto utiliza um ambiente virtual e scripts de automação para facilitar o desenvolvimento.
 
-## ⚙️ Como Executar o Projeto
-
-Como o foco atual é o Core Domain, a aplicação roda via terminal para demonstrar a orquestração entre o Repositório e o Domínio.
-
-1. **Clone o repositório** e acesse a pasta do projeto.
-2. **Execute o script principal** de demonstração:
+1. **Clone o repositório:**
    ```bash
-   python main.py
+   git clone https://github.com/usuario/agendamento-mvp
    ```
+
+2. **Crie e ative o virtualenv:**
+   ```powershell
+   python -m venv .venv
+   .\.venv\Scripts\Activate.ps1
+   ```
+
+3. **Instale as dependências:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Execute as migrações:**
+   ```bash
+   python manage.py migrate
+   ```
+
+## 🧪 Qualidade e Testes
+
+A qualidade é monitorada continuamente através do script `check.ps1`. Atualmente, o projeto mantém:
+
+* **Nota Pylint:** 10.00/10
+* **Cobertura de Testes:** 94% (com 100% de cobertura no Core e Application)
+* **Tipagem:** Verificação estrita com Mypy
+
+Para rodar a bateria completa de verificações:
+```powershell
+.\check.ps1
+```
 
 ## 🧪 Como Rodar os Testes
 

@@ -1,28 +1,29 @@
 from datetime import date
+from typing import List, Optional
 
 from core.agendamento import Agendamento
+from infra.repository import AgendamentoRepositorio  # Importando a interface
 from rest_api.models import AgendamentoModel
 
 
-class DjangoAgendamentoRepository:
+class DjangoAgendamentoRepository(AgendamentoRepositorio):  # Herança explícita
 
-    def salvar(self, agendamento_entity: Agendamento, medico_nome: str) -> None:
+    def salvar(self, agendamento: Agendamento, medico_nome: str) -> None:
         AgendamentoModel.objects.create(
-            paciente_id=agendamento_entity.paciente_id,
+            paciente_id=agendamento.paciente_id,
             medico_nome=medico_nome,
-            inicio=agendamento_entity.inicio,
-            duracao_minutos=agendamento_entity.duracao_minutos,
+            inicio=agendamento.inicio,
+            duracao_minutos=agendamento.duracao_minutos,
+            ativo=agendamento.ativo,
         )
 
     def buscar_por_medico_e_data(
-        self, medico_nome: str, data_alvo: date
-    ) -> list[Agendamento]:
-        # Busca apenas os agendamentos daquele médico naquele dia específico
+        self, medico_nome: str, data: date
+    ) -> List[Agendamento]:
         modelos = AgendamentoModel.objects.filter(
-            medico_nome=medico_nome, inicio__date=data_alvo
+            medico_nome=medico_nome, inicio__date=data
         )
 
-        # Converte os dados do banco de volta para a sua classe Pura
         return [
             Agendamento(
                 paciente_id=model.paciente_id,
@@ -32,42 +33,37 @@ class DjangoAgendamentoRepository:
             for model in modelos
         ]
 
-    def listar_todos(self) -> list[dict]:
+    def listar_todos(self) -> List[Agendamento]:
+        # Refatorado: Agora retorna Entidades em vez de dicionários
         modelos = AgendamentoModel.objects.all()
 
-        resultado = []
-        for model in modelos:
-            resultado.append(
-                {
-                    "paciente_id": model.paciente_id,
-                    "medico_nome": model.medico_nome,
-                    "inicio": model.inicio,
-                    "duracao_minutos": model.duracao_minutos,
-                }
+        return [
+            Agendamento(
+                paciente_id=model.paciente_id,
+                inicio=model.inicio,
+                duracao_minutos=model.duracao_minutos,
             )
+            for model in modelos
+        ]
 
-        return resultado
-
-    def buscar_por_id(self, agendamento_id: int) -> Agendamento | None:
-
+    def buscar_por_id(self, agendamento_id: int) -> Optional[Agendamento]:
         modelo = AgendamentoModel.objects.filter(id=agendamento_id).first()
         if not modelo:
             return None
 
-        # Monta a entidade pura do Core
         agendamento = Agendamento(
             paciente_id=modelo.paciente_id,
             inicio=modelo.inicio,
             duracao_minutos=modelo.duracao_minutos,
         )
 
-        # Garante que o status do banco reflita na entidade
         if not modelo.ativo:
             agendamento.cancelar()
 
         return agendamento
 
     def atualizar(self, agendamento: Agendamento) -> None:
+        # Nota: Filtramos por campos únicos para garantir a atualização correta
         AgendamentoModel.objects.filter(
             paciente_id=agendamento.paciente_id, inicio=agendamento.inicio
         ).update(ativo=agendamento.ativo)

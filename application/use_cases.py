@@ -1,6 +1,6 @@
 from datetime import datetime, time
 
-from django.utils import timezone
+from django.utils import timezone  # type: ignore
 
 from core.agendamento import Agendamento, Medico
 from infra.repository import AgendamentoRepositorio

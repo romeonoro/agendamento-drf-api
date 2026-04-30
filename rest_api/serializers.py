@@ -1,4 +1,5 @@
-from rest_framework import serializers
+# pylint: disable=abstract-method
+from rest_framework import serializers  # type: ignore
 
 
 class AgendamentoInputSerializer(serializers.Serializer):
