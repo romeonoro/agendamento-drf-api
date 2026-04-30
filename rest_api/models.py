@@ -7,6 +7,7 @@ class AgendamentoModel(models.Model):
     medico_nome = models.CharField(max_length=255)
     inicio = models.DateTimeField()
     duracao_minutos = models.IntegerField()
+    ativo = models.BooleanField(default=True)
 
     criado_em = models.DateTimeField(auto_now_add=True)
 

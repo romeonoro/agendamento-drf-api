@@ -47,3 +47,27 @@ class DjangoAgendamentoRepository:
             )
 
         return resultado
+
+    def buscar_por_id(self, agendamento_id: int) -> Agendamento | None:
+
+        modelo = AgendamentoModel.objects.filter(id=agendamento_id).first()
+        if not modelo:
+            return None
+
+        # Monta a entidade pura do Core
+        agendamento = Agendamento(
+            paciente_id=modelo.paciente_id,
+            inicio=modelo.inicio,
+            duracao_minutos=modelo.duracao_minutos,
+        )
+
+        # Garante que o status do banco reflita na entidade
+        if not modelo.ativo:
+            agendamento.cancelar()
+
+        return agendamento
+
+    def atualizar(self, agendamento: Agendamento) -> None:
+        AgendamentoModel.objects.filter(
+            paciente_id=agendamento.paciente_id, inicio=agendamento.inicio
+        ).update(ativo=agendamento.ativo)

@@ -19,3 +19,9 @@ class AgendamentoRepositorio:
                 return
 
         raise AgendamentoNaoEncontradoError(paciente_id)
+
+    def buscar_por_id(self, agendamento_id: int) -> Agendamento | None:
+        """Busca um agendamento no banco pelo ID. Retorna None se não encontrar."""
+
+    def atualizar(self, agendamento: Agendamento) -> None:
+        """Atualiza os dados de um agendamento existente no banco."""
